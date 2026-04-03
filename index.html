@@ -366,7 +366,8 @@ async function addProduct(){
 
 async function loadProducts(){
   try{
-    allProducts=await sbFetch('products?order=created_at.desc&limit=500');
+    const filter=currentUser.is_admin?'products?order=created_at.desc&limit=500':'products?user_name=eq.'+encodeURIComponent(currentUser.name)+'&order=created_at.desc&limit=500';
+    allProducts=await sbFetch(filter);
     renderList();
     renderStats();
     if(currentUser&&currentUser.is_admin){renderAdminList();loadAdminUsers();}
@@ -405,7 +406,7 @@ function renderList(){
     <div class="list-item">
       <div style="flex:1;">
         <div class="item-name">${getProdEmoji(p.name)}${p.name}${marketTag(p.market)}</div>
-        <div class="item-meta">${p.user_name} · ${p.group_name} · ${p.date||''}${p.qty?' · '+p.qty:''}</div>
+        <div class="item-meta">${p.date||""}${p.qty?" · "+p.qty:""}</div>
         ${(currentUser&&(currentUser.is_admin||p.user_name===currentUser.name))?`
         <div class="item-actions">
           <button class="btn btn-sm btn-edit" onclick="openEdit('${p.id}')">✏️ Tahrirlash</button>
