@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
+<link rel="manifest" href="/bozor-narx/manifest.json">
+<meta name="theme-color" content="#4CAF50">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Bozor Narx">
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Bozor Narx Platformasi</title>
@@ -564,6 +569,15 @@ function downloadCSV(){
   a.download='bozor_narxlar_'+new Date().toISOString().split('T')[0]+'.csv';
   a.click();
 }
+</script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/bozor-narx/service-worker.js')
+        .then(reg => console.log('✅ SW ishlayapti'))
+        .catch(err => console.error('❌ Xato:', err));
+    });
+  }
 </script>
 </body>
 </html>
