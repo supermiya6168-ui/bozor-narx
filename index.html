@@ -1,582 +1,366 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-<link rel="manifest" href="/bozor-narx/manifest.json">
-<meta name="theme-color" content="#4CAF50">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Bozor Narx">
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Bozor Narx Platformasi</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f5f0;color:#1a1a1a;min-height:100vh;}
-.app{max-width:760px;margin:0 auto;padding:1.5rem 1rem;}
-.screen{display:none;}.screen.active{display:block;}
-.card{background:#fff;border:1px solid #e5e5e0;border-radius:12px;padding:1.5rem;margin-bottom:1rem;}
-.title{font-size:22px;font-weight:600;margin-bottom:0.4rem;}
-.subtitle{font-size:14px;color:#666;margin-bottom:1.4rem;}
-.field{margin-bottom:1rem;}
-.field label{display:block;font-size:13px;color:#666;margin-bottom:5px;}
-.field input,.field select{width:100%;padding:9px 12px;font-size:14px;border:1px solid #ddd;border-radius:8px;background:#fafafa;color:#1a1a1a;outline:none;}
-.field input:focus{border-color:#999;background:#fff;}
-.btn{padding:9px 20px;border-radius:8px;border:1px solid #ddd;background:transparent;color:#1a1a1a;font-size:14px;cursor:pointer;}
-.btn:hover{background:#f0f0eb;}
-.btn-primary{background:#1a1a1a;color:#fff;border-color:#1a1a1a;}
-.btn-primary:hover{background:#333;}
-.btn-sm{padding:5px 12px;font-size:13px;}
-.btn-danger{background:#fff0f0;color:#c0392b;border-color:#f5c6c6;}
-.btn-danger:hover{background:#ffe0e0;}
-.btn-edit{background:#f0f7ff;color:#185fa5;border-color:#b5d4f4;}
-.btn-edit:hover{background:#e0f0ff;}
-.error{font-size:13px;color:#c0392b;margin-top:6px;display:none;}
-.success-msg{font-size:13px;color:#27ae60;margin-top:6px;display:none;}
-.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1rem;}
-.metric{background:#f5f5f0;border-radius:8px;padding:1rem;}
-.metric-label{font-size:12px;color:#888;margin-bottom:4px;}
-.metric-val{font-size:22px;font-weight:600;}
-.nav{display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center;justify-content:space-between;}
-.nav-left{display:flex;gap:6px;flex-wrap:wrap;}
-.tab{padding:6px 14px;border-radius:20px;border:1px solid #ddd;background:transparent;font-size:13px;cursor:pointer;color:#666;}
-.tab.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a;}
-.tab.admin-tab{border-color:#f5c6c6;color:#c0392b;}
-.tab.admin-tab.active{background:#c0392b;border-color:#c0392b;color:#fff;}
-.list-item{display:flex;align-items:flex-start;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0eb;}
-.list-item:last-child{border-bottom:none;}
-.item-name{font-size:14px;font-weight:500;}
-.item-meta{font-size:12px;color:#888;margin-top:2px;}
-.price-badge{font-size:14px;font-weight:600;white-space:nowrap;margin-left:8px;}
-.empty{text-align:center;padding:2rem;color:#999;font-size:14px;}
-.tag{display:inline-block;font-size:11px;padding:2px 7px;border-radius:10px;margin-left:4px;}
-.tag-do{background:#eaf3de;color:#3b6d11;}
-.tag-bozor{background:#e1f5ee;color:#0f6e56;}
-.tag-super{background:#e6f1fb;color:#185fa5;}
-.tag-onlayn{background:#eeedfe;color:#534ab7;}
-.tag-other{background:#f1efe8;color:#5f5e5a;}
-.row{display:flex;gap:10px;}
-.row .field{flex:1;}
-.avatar{width:34px;height:34px;border-radius:50%;background:#e6f1fb;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#185fa5;flex-shrink:0;}
-.loading{text-align:center;padding:1.5rem;color:#999;font-size:14px;}
-.spinner{display:inline-block;width:16px;height:16px;border:2px solid #ddd;border-top-color:#1a1a1a;border-radius:50%;animation:spin 0.7s linear infinite;margin-right:6px;vertical-align:middle;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.prod-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.2rem;}
-.prod-card{border:2px solid #e5e5e0;border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;background:#fafafa;transition:all 0.15s;}
-.prod-card:hover{border-color:#999;background:#f0f0eb;}
-.prod-card.selected{border-color:#1a1a1a;background:#1a1a1a;color:#fff;}
-.prod-emoji{font-size:28px;display:block;margin-bottom:4px;}
-.prod-label{font-size:12px;font-weight:500;}
-.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);display:none;align-items:center;justify-content:center;z-index:1000;}
-.modal-overlay.open{display:flex;}
-.modal{background:#fff;border-radius:14px;padding:1.5rem;width:90%;max-width:420px;max-height:90vh;overflow-y:auto;}
-.modal-title{font-size:18px;font-weight:600;margin-bottom:1rem;}
-.modal-actions{display:flex;gap:8px;margin-top:1rem;}
-.admin-badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;background:#fff0f0;color:#c0392b;border:1px solid #f5c6c6;margin-left:6px;}
-.user-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0eb;}
-.user-row:last-child{border-bottom:none;}
-.blocked-badge{font-size:11px;padding:2px 8px;border-radius:10px;background:#fff0f0;color:#c0392b;}
-.item-actions{display:flex;gap:6px;margin-top:6px;}
-.search-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;}
-@media(max-width:480px){
-  .prod-grid{grid-template-columns:repeat(3,1fr);}
-  .metric-grid{grid-template-columns:repeat(2,1fr);}
-  .row{flex-direction:column;gap:0;}
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bozor Narx Platformasi</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f5f5f0; color: #1a1a1a; min-height: 100vh; }
+    .app { max-width: 720px; margin: 0 auto; padding: 1.5rem 1rem; }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .card { background: #fff; border: 1px solid #e5e5e0; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; }
+    .title { font-size: 22px; font-weight: 600; margin-bottom: 0.4rem; }
+    .subtitle { font-size: 14px; color: #666; margin-bottom: 1.4rem; }
+    .field { margin-bottom: 1rem; }
+    .field label { display: block; font-size: 13px; color: #666; margin-bottom: 5px; }
+    .field input, .field select {
+      width: 100%; padding: 9px 12px; font-size: 14px;
+      border: 1px solid #ddd; border-radius: 8px;
+      background: #fafafa; color: #1a1a1a; outline: none;
+    }
+    .field input:focus { border-color: #999; background: #fff; }
+    .btn {
+      padding: 9px 20px; border-radius: 8px; border: 1px solid #ddd;
+      background: transparent; color: #1a1a1a; font-size: 14px; cursor: pointer;
+    }
+    .btn:hover { background: #f0f0eb; }
+    .btn-primary { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+    .btn-primary:hover { background: #333; }
+    .btn-sm { padding: 5px 12px; font-size: 13px; }
+    .error { font-size: 13px; color: #c0392b; margin-top: 6px; display: none; }
+    .success-msg { font-size: 13px; color: #27ae60; margin-top: 6px; display: none; }
+    .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1rem; }
+    .metric { background: #f5f5f0; border-radius: 8px; padding: 1rem; }
+    .metric-label { font-size: 12px; color: #888; margin-bottom: 4px; }
+    .metric-val { font-size: 22px; font-weight: 600; }
+    .nav { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+    .nav-left { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tab { padding: 6px 14px; border-radius: 20px; border: 1px solid #ddd; background: transparent; font-size: 13px; cursor: pointer; color: #666; }
+    .tab.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+    .list-item { display: flex; align-items: flex-start; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0eb; }
+    .list-item:last-child { border-bottom: none; }
+    .item-name { font-size: 14px; font-weight: 500; }
+    .item-meta { font-size: 12px; color: #888; margin-top: 2px; }
+    .price-badge { font-size: 14px; font-weight: 600; white-space: nowrap; margin-left: 8px; }
+    .empty { text-align: center; padding: 2rem; color: #999; font-size: 14px; }
+    .tag { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 10px; margin-left: 4px; }
+    .tag-do { background: #eaf3de; color: #3b6d11; }
+    .tag-bozor { background: #e1f5ee; color: #0f6e56; }
+    .tag-super { background: #e6f1fb; color: #185fa5; }
+    .tag-onlayn { background: #eeedfe; color: #534ab7; }
+    .tag-other { background: #f1efe8; color: #5f5e5a; }
+    .row { display: flex; gap: 10px; }
+    .row .field { flex: 1; }
+    .avatar { width: 34px; height: 34px; border-radius: 50%; background: #e6f1fb; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #185fa5; flex-shrink: 0; }
+    .category-tag { display: inline-block; font-size: 11px; padding: 3px 8px; border-radius: 10px; background: #f5f5f0; color: #666; border: 1px solid #e5e5e0; cursor: pointer; margin-right: 4px; margin-bottom: 6px; }
+    .category-tag.sel { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+    .loading { text-align: center; padding: 1.5rem; color: #999; font-size: 14px; }
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #ddd; border-top-color: #1a1a1a; border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 6px; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .logo { font-size: 24px; margin-bottom: 0.5rem; }
+    @media (max-width: 480px) {
+      .metric-grid { grid-template-columns: repeat(2, 1fr); }
+      .row { flex-direction: column; gap: 0; }
+    }
+  </style>
 </head>
 <body>
 <div class="app">
 
-<div class="screen active" id="s-login">
-  <div class="card" style="max-width:400px;margin:2rem auto;">
-    <div style="font-size:28px;margin-bottom:0.5rem;">📊</div>
-    <p class="title">Bozor Narx Platformasi</p>
-    <p class="subtitle">Guruh a'zolari uchun narx kuzatuv tizimi</p>
-    <div class="field"><label>Ism va familiya</label><input type="text" id="login-name" placeholder="Alisher Karimov"/></div>
-    <div class="field"><label>Guruh nomi</label><input type="text" id="login-group" placeholder="EK-21"/></div>
-    <div class="field"><label>Parol</label><input type="password" id="login-pass" placeholder="Parolni kiriting"/></div>
-    <p class="error" id="login-err">Xato!</p>
-    <div style="display:flex;gap:8px;margin-top:1.2rem;">
-      <button class="btn btn-primary" style="flex:1" onclick="doLogin()">Kirish</button>
-      <button class="btn" style="flex:1" onclick="setScreen('s-reg')">Ro'yxatdan o'tish</button>
-    </div>
-  </div>
-</div>
-
-<div class="screen" id="s-reg">
-  <div class="card" style="max-width:400px;margin:2rem auto;">
-    <p class="title">Ro'yxatdan o'tish</p>
-    <p class="subtitle">Yangi hisob yaratish</p>
-    <div class="field"><label>Ism va familiya</label><input type="text" id="reg-name" placeholder="To'liq ism"/></div>
-    <div class="field"><label>Guruh nomi</label><input type="text" id="reg-group" placeholder="EK-21"/></div>
-    <div class="field"><label>Parol</label><input type="password" id="reg-pass" placeholder="Parol o'rnating"/></div>
-    <p class="error" id="reg-err">Xato!</p>
-    <p class="success-msg" id="reg-ok">Muvaffaqiyatli ro'yxatdan o'tdingiz!</p>
-    <div style="display:flex;gap:8px;margin-top:1.2rem;">
-      <button class="btn btn-primary" style="flex:1" onclick="doRegister()">Ro'yxatdan o'tish</button>
-      <button class="btn" onclick="setScreen('s-login')">Orqaga</button>
-    </div>
-  </div>
-</div>
-
-<div class="screen" id="s-main">
-  <div class="nav">
-    <div class="nav-left">
-      <button class="tab active" id="tab-add" onclick="switchTab('add')">Narx qo'shish</button>
-      <button class="tab" id="tab-list" onclick="switchTab('list')">Ma'lumotlar</button>
-      <button class="tab" id="tab-stats" onclick="switchTab('stats')">Statistika</button>
-      <button class="tab admin-tab" id="tab-admin" onclick="switchTab('admin')" style="display:none;">👑 Admin</button>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <div class="avatar" id="user-avatar">AK</div>
-      <span style="font-size:13px;color:#666;" id="user-label"></span>
-      <button class="btn btn-sm" onclick="doLogout()">Chiqish</button>
-    </div>
-  </div>
-
-  <div id="tab-content-add">
-    <div class="card">
-      <p class="title" style="font-size:18px;margin-bottom:0.2rem;">Mahsulot tanlang</p>
-      <p class="subtitle" style="margin-bottom:1rem;">Mahsulotni bosing yoki qo'lda kiriting</p>
-      <div class="prod-grid" id="prod-grid"></div>
-      <div class="field"><label>Mahsulot nomi <span style="color:#999;font-size:12px;">(tanlash yoki o'zingiz yozing)</span></label>
-        <input type="text" id="prod-name" placeholder="Masalan: Guruch, Limon..."/>
+  <!-- LOGIN -->
+  <div class="screen active" id="s-login">
+    <div class="card" style="max-width:400px;margin:2rem auto;">
+      <div class="logo">📊</div>
+      <p class="title">Bozor Narx Platformasi</p>
+      <p class="subtitle">Guruh a'zolari uchun narx kuzatuv tizimi</p>
+      <div class="field"><label>Ism va familiya</label><input type="text" id="login-name" placeholder="Alisher Karimov" /></div>
+      <div class="field"><label>Guruh nomi</label><input type="text" id="login-group" placeholder="EK-21" /></div>
+      <div class="field"><label>Parol</label><input type="password" id="login-pass" placeholder="Parolni kiriting" /></div>
+      <p class="error" id="login-err">Xato!</p>
+      <div style="display:flex;gap:8px;margin-top:1.2rem;">
+        <button class="btn btn-primary" style="flex:1" onclick="doLogin()">Kirish</button>
+        <button class="btn" style="flex:1" onclick="setScreen('s-reg')">Ro'yxatdan o'tish</button>
       </div>
-      <div class="row">
-        <div class="field"><label>Narxi (so'm)</label><input type="number" id="prod-price" placeholder="5000" min="0"/></div>
-        <div class="field"><label>Miqdori</label><input type="text" id="prod-qty" placeholder="1 kg, 12 dona..."/></div>
+    </div>
+  </div>
+
+  <!-- REGISTER -->
+  <div class="screen" id="s-reg">
+    <div class="card" style="max-width:400px;margin:2rem auto;">
+      <p class="title">Ro'yxatdan o'tish</p>
+      <p class="subtitle">Yangi hisob yaratish</p>
+      <div class="field"><label>Ism va familiya</label><input type="text" id="reg-name" placeholder="To'liq ism" /></div>
+      <div class="field"><label>Guruh nomi</label><input type="text" id="reg-group" placeholder="EK-21" /></div>
+      <div class="field"><label>Parol</label><input type="password" id="reg-pass" placeholder="Parol o'rnating" /></div>
+      <p class="error" id="reg-err">Xato!</p>
+      <p class="success-msg" id="reg-ok">Muvaffaqiyatli ro'yxatdan o'tdingiz! Endi kiring.</p>
+      <div style="display:flex;gap:8px;margin-top:1.2rem;">
+        <button class="btn btn-primary" style="flex:1" onclick="doRegister()">Ro'yxatdan o'tish</button>
+        <button class="btn" onclick="setScreen('s-login')">Orqaga</button>
       </div>
-      <div class="row">
-        <div class="field"><label>Bozor turi</label>
-          <select id="prod-market">
-            <option>Do'kon</option><option>Bozor</option><option>Supermarket</option><option>Onlayn</option><option>Boshqa</option>
-          </select>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="screen" id="s-main">
+    <div class="nav">
+      <div class="nav-left">
+        <button class="tab active" id="tab-add" onclick="switchTab('add')">Narx qo'shish</button>
+        <button class="tab" id="tab-list" onclick="switchTab('list')">Ma'lumotlar</button>
+        <button class="tab" id="tab-stats" onclick="switchTab('stats')">Statistika</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="avatar" id="user-avatar">AK</div>
+        <span style="font-size:13px;color:#666;" id="user-label"></span>
+        <button class="btn btn-sm" onclick="doLogout()">Chiqish</button>
+      </div>
+    </div>
+
+    <!-- ADD TAB -->
+    <div id="tab-content-add">
+      <div class="card">
+        <p class="title" style="font-size:18px;margin-bottom:0.2rem;">Mahsulot narxini qo'shish</p>
+        <p class="subtitle" style="margin-bottom:1.2rem;">Hafta davomida kuzatgan narxingizni kiriting</p>
+        <div class="field"><label>Mahsulot nomi</label><input type="text" id="prod-name" placeholder="Non, Tuxum, Sabzi..." /></div>
+        <div class="row">
+          <div class="field"><label>Narxi (so'm)</label><input type="number" id="prod-price" placeholder="5000" min="0" /></div>
+          <div class="field"><label>Miqdori</label><input type="text" id="prod-qty" placeholder="1 kg, 12 dona..." /></div>
         </div>
-        <div class="field"><label>Sana</label><input type="date" id="prod-date"/></div>
-      </div>
-      <p class="error" id="add-err">Mahsulot nomi va narxni kiriting</p>
-      <p class="success-msg" id="add-ok">✓ Muvaffaqiyatli qo'shildi!</p>
-      <button class="btn btn-primary" style="width:100%;margin-top:0.5rem;" onclick="addProduct()">Qo'shish</button>
-    </div>
-  </div>
-
-  <div id="tab-content-list" style="display:none;">
-    <div class="card" style="padding:1rem;margin-bottom:0.75rem;">
-      <div class="search-row">
-        <input type="text" id="search-input" placeholder="Mahsulot yoki a'zo nomi..." oninput="renderList()" style="flex:1;"/>
-        <button class="btn btn-sm" onclick="downloadCSV()">⬇ CSV</button>
-        <button class="btn btn-sm" onclick="loadProducts()">↻</button>
-      </div>
-    </div>
-    <div class="card" id="list-container"><p class="loading"><span class="spinner"></span>Yuklanmoqda...</p></div>
-  </div>
-
-  <div id="tab-content-stats" style="display:none;">
-    <div class="metric-grid">
-      <div class="metric"><div class="metric-label">Jami yozuvlar</div><div class="metric-val" id="st-total">—</div></div>
-      <div class="metric"><div class="metric-label">A'zolar soni</div><div class="metric-val" id="st-users">—</div></div>
-      <div class="metric"><div class="metric-label">O'rtacha narx</div><div class="metric-val" id="st-avg">—</div></div>
-    </div>
-    <div class="card">
-      <p style="font-size:14px;font-weight:600;margin-bottom:1rem;">Eng ko'p qo'shilgan mahsulotlar</p>
-      <div id="top-products"></div>
-    </div>
-    <div class="card" style="margin-top:0.75rem;">
-      <p style="font-size:14px;font-weight:600;margin-bottom:1rem;">A'zolar faolligi</p>
-      <div id="user-activity"></div>
-    </div>
-  </div>
-
-  <div id="tab-content-admin" style="display:none;">
-    <div class="card" style="border-left:3px solid #c0392b;">
-      <p style="font-size:16px;font-weight:600;margin-bottom:0.3rem;">👑 Admin paneli</p>
-      <p style="font-size:13px;color:#888;margin-bottom:1rem;">Barcha ma'lumotlar va a'zolarni boshqaring</p>
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-sm" onclick="adminTab('records')" id="atab-records" style="background:#1a1a1a;color:#fff;border-color:#1a1a1a;">Barcha yozuvlar</button>
-        <button class="btn btn-sm" onclick="adminTab('users')" id="atab-users">A'zolar</button>
+        <div class="row">
+          <div class="field"><label>Bozor turi</label>
+            <select id="prod-market">
+              <option>Do'kon</option><option>Bozor</option><option>Supermarket</option><option>Onlayn</option><option>Boshqa</option>
+            </select>
+          </div>
+          <div class="field"><label>Kategoriya</label>
+            <select id="prod-cat">
+              <option>Oziq-ovqat</option><option>Sabzavot</option><option>Go'sht</option><option>Sut</option><option>Non</option><option>Ichimlik</option><option>Boshqa</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label>Sana</label><input type="date" id="prod-date" /></div>
+        <p class="error" id="add-err">Mahsulot nomi va narxni kiriting</p>
+        <p class="success-msg" id="add-ok">✓ Muvaffaqiyatli qo'shildi!</p>
+        <button class="btn btn-primary" style="width:100%;margin-top:0.5rem;" onclick="addProduct()">Qo'shish</button>
       </div>
     </div>
-    <div id="admin-records">
+
+    <!-- LIST TAB -->
+    <div id="tab-content-list" style="display:none;">
       <div class="card" style="padding:1rem;margin-bottom:0.75rem;">
-        <div class="search-row">
-          <input type="text" id="admin-search" placeholder="Qidirish..." oninput="renderAdminList()" style="flex:1;"/>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input type="text" id="search-input" placeholder="Mahsulot yoki a'zo nomi..." oninput="renderList()" style="flex:1;" />
           <button class="btn btn-sm" onclick="downloadCSV()">⬇ CSV</button>
+          <button class="btn btn-sm" onclick="loadProducts()" title="Yangilash">↻</button>
+        </div>
+        <div style="margin-top:10px;">
+          <span class="category-tag sel" onclick="filterCat(this,'')">Barchasi</span>
+          <span class="category-tag" onclick="filterCat(this,'Oziq-ovqat')">Oziq-ovqat</span>
+          <span class="category-tag" onclick="filterCat(this,'Sabzavot')">Sabzavot</span>
+          <span class="category-tag" onclick="filterCat(this,'Go\'sht')">Go'sht</span>
+          <span class="category-tag" onclick="filterCat(this,'Sut')">Sut</span>
+          <span class="category-tag" onclick="filterCat(this,'Non')">Non</span>
         </div>
       </div>
-      <div class="card" id="admin-list-container"><p class="loading"><span class="spinner"></span>Yuklanmoqda...</p></div>
+      <div class="card" id="list-container"><p class="loading"><span class="spinner"></span>Yuklanmoqda...</p></div>
     </div>
-    <div id="admin-users" style="display:none;">
-      <div class="card" id="admin-users-container"><p class="loading"><span class="spinner"></span>Yuklanmoqda...</p></div>
-    </div>
-  </div>
-</div>
 
-<div class="modal-overlay" id="edit-modal">
-  <div class="modal">
-    <p class="modal-title">✏️ Ma'lumotni tahrirlash</p>
-    <input type="hidden" id="edit-id"/>
-    <div class="field"><label>Mahsulot nomi</label><input type="text" id="edit-name"/></div>
-    <div class="row">
-      <div class="field"><label>Narxi (so'm)</label><input type="number" id="edit-price"/></div>
-      <div class="field"><label>Miqdori</label><input type="text" id="edit-qty"/></div>
-    </div>
-    <div class="row">
-      <div class="field"><label>Bozor turi</label>
-        <select id="edit-market">
-          <option>Do'kon</option><option>Bozor</option><option>Supermarket</option><option>Onlayn</option><option>Boshqa</option>
-        </select>
+    <!-- STATS TAB -->
+    <div id="tab-content-stats" style="display:none;">
+      <div class="metric-grid">
+        <div class="metric"><div class="metric-label">Jami yozuvlar</div><div class="metric-val" id="st-total">—</div></div>
+        <div class="metric"><div class="metric-label">A'zolar soni</div><div class="metric-val" id="st-users">—</div></div>
+        <div class="metric"><div class="metric-label">O'rtacha narx</div><div class="metric-val" id="st-avg">—</div></div>
       </div>
-      <div class="field"><label>Sana</label><input type="date" id="edit-date"/></div>
-    </div>
-    <p class="error" id="edit-err">Xato!</p>
-    <div class="modal-actions">
-      <button class="btn btn-primary" style="flex:1" onclick="saveEdit()">Saqlash</button>
-      <button class="btn" onclick="closeModal()">Bekor qilish</button>
+      <div class="card">
+        <p style="font-size:14px;font-weight:600;margin-bottom:1rem;">Eng ko'p qo'shilgan mahsulotlar</p>
+        <div id="top-products"><p class="loading"><span class="spinner"></span>Yuklanmoqda...</p></div>
+      </div>
+      <div class="card" style="margin-top:0.75rem;">
+        <p style="font-size:14px;font-weight:600;margin-bottom:1rem;">A'zolar faolligi</p>
+        <div id="user-activity"><p class="loading"><span class="spinner"></span>Yuklanmoqda...</p></div>
+      </div>
     </div>
   </div>
-</div>
 
 </div>
+
 <script>
-const SUPA_URL='https://itmdtomyzwrufdpwjyzk.supabase.co';
-const SUPA_KEY='sb_publishable_KtXAgBFkH3nAAnNFCynKeA_aV3LKLtk';
-const ADMIN_NAME='admin';
-const ADMIN_GROUP='admin';
-const ADMIN_PASS='admin2024';
+  const SUPA_URL = 'https://itmdtomyzwrufdpwjyzk.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml0bWR0b215endydWZkcHdqeXprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNTM4MTIsImV4cCI6MjA5MDYyOTgxMn0.bGlF1uX4DTN2GXxZekYMZR9seYXRZbzg7qppGrQ3otE';
 
-const PRODUCTS=[
-  {emoji:'🥔',label:'Kartoshka',cat:'Sabzavot'},
-  {emoji:'🧅',label:'Piyoz',cat:'Sabzavot'},
-  {emoji:'🥕',label:'Sabzi',cat:'Sabzavot'},
-  {emoji:'🍅',label:'Pomidor',cat:'Sabzavot'},
-  {emoji:'🥩',label:"Go'sht",cat:"Go'sht"},
-  {emoji:'🐔',label:'Tovuq',cat:"Go'sht"},
-  {emoji:'🫙',label:"O'simlik yog'i",cat:'Oziq-ovqat'},
-  {emoji:'🍞',label:'Non',cat:'Non'},
-  {emoji:'🥚',label:'Tuxum',cat:'Oziq-ovqat'},
-  {emoji:'🍚',label:'Guruch',cat:'Non'},
-  {emoji:'🧈',label:'Sariyog',cat:'Sut'},
-  {emoji:'🥛',label:'Sut',cat:'Sut'},
-  {emoji:'💧',label:'Suv',cat:'Ichimlik'},
-  {emoji:'📦',label:'Boshqa',cat:'Boshqa'},
-];
-
-let currentUser=null;
-let allProducts=[];
-let blockedUsers=JSON.parse(localStorage.getItem('blocked_users')||'[]');
-
-function setScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-async function sbFetch(path,opts={}){
-  const res=await fetch(SUPA_URL+'/rest/v1/'+path,{
-    ...opts,
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':opts.prefer||'return=representation',...(opts.headers||{})}
-  });
-  if(!res.ok){const e=await res.text();throw new Error(e);}
-  const text=await res.text();
-  return text?JSON.parse(text):[];
-}
-
-function buildProdGrid(){
-  const g=document.getElementById('prod-grid');
-  g.innerHTML=PRODUCTS.map((p,i)=>`
-    <div class="prod-card" onclick="selectProd(${i})" id="pc-${i}">
-      <span class="prod-emoji">${p.emoji}</span>
-      <span class="prod-label">${p.label}</span>
-    </div>`).join('');
-}
-
-function selectProd(i){
-  document.querySelectorAll('.prod-card').forEach(c=>c.classList.remove('selected'));
-  document.getElementById('pc-'+i).classList.add('selected');
-  document.getElementById('prod-name').value=PRODUCTS[i].label;
-}
-
-async function doRegister(){
-  const name=document.getElementById('reg-name').value.trim();
-  const group=document.getElementById('reg-group').value.trim();
-  const pass=document.getElementById('reg-pass').value.trim();
-  const err=document.getElementById('reg-err');
-  const ok=document.getElementById('reg-ok');
-  err.style.display='none';ok.style.display='none';
-  if(!name||!group||!pass){err.textContent="Barcha maydonlarni to'ldiring";err.style.display='block';return;}
-  if(name===ADMIN_NAME){err.textContent="Bu nom band";err.style.display='block';return;}
-  try{
-    const ex=await sbFetch('users?name=eq.'+encodeURIComponent(name)+'&group_name=eq.'+encodeURIComponent(group));
-    if(ex.length){err.textContent="Bu foydalanuvchi allaqachon mavjud";err.style.display='block';return;}
-    await sbFetch('users',{method:'POST',body:JSON.stringify({name,group_name:group,pass})});
-    ok.style.display='block';
-    setTimeout(()=>setScreen('s-login'),2000);
-  }catch(e){err.textContent="Xato: "+e.message;err.style.display='block';}
-}
-
-async function doLogin(){
-  const name=document.getElementById('login-name').value.trim();
-  const group=document.getElementById('login-group').value.trim();
-  const pass=document.getElementById('login-pass').value.trim();
-  const err=document.getElementById('login-err');
-  err.style.display='none';
-  if(!name||!group||!pass){err.textContent="Barcha maydonlarni to'ldiring";err.style.display='block';return;}
-  if(blockedUsers.includes(name)){err.textContent="Hisobingiz bloklangan. Admin bilan bog'laning.";err.style.display='block';return;}
-  if(name===ADMIN_NAME&&group===ADMIN_GROUP&&pass===ADMIN_PASS){
-    currentUser={name:ADMIN_NAME,group_name:ADMIN_GROUP,is_admin:true};
-    document.getElementById('user-avatar').textContent='AD';
-    document.getElementById('user-label').innerHTML='Admin <span class="admin-badge">👑</span>';
-    document.getElementById('tab-admin').style.display='block';
-    setScreen('s-main');
-    switchTab('admin');
-    return;
-  }
-  try{
-    const users=await sbFetch('users?name=eq.'+encodeURIComponent(name)+'&group_name=eq.'+encodeURIComponent(group)+'&pass=eq.'+encodeURIComponent(pass));
-    if(!users.length){err.textContent="Ism, guruh yoki parol noto'g'ri";err.style.display='block';return;}
-    currentUser=users[0];
-    document.getElementById('user-avatar').textContent=name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    document.getElementById('user-label').textContent=name;
-    document.getElementById('tab-admin').style.display='none';
-    setScreen('s-main');
-    document.getElementById('prod-date').value=new Date().toISOString().split('T')[0];
-    buildProdGrid();
-    switchTab('add');
-  }catch(e){err.textContent="Xato: "+e.message;err.style.display='block';}
-}
-
-function doLogout(){currentUser=null;allProducts=[];setScreen('s-login');}
-
-async function addProduct(){
-  const name=document.getElementById('prod-name').value.trim();
-  const price=parseFloat(document.getElementById('prod-price').value);
-  const qty=document.getElementById('prod-qty').value.trim();
-  const market=document.getElementById('prod-market').value;
-  const date=document.getElementById('prod-date').value;
-  const err=document.getElementById('add-err');
-  const ok=document.getElementById('add-ok');
-  err.style.display='none';ok.style.display='none';
-  if(!name||!price||price<=0){err.style.display='block';return;}
-  const prod=PRODUCTS.find(p=>p.label===name);
-  const cat=prod?prod.cat:'Boshqa';
-  try{
-    await sbFetch('products',{method:'POST',body:JSON.stringify({name,price,qty,market,cat,date,user_name:currentUser.name,group_name:currentUser.group_name})});
-    ok.style.display='block';
-    document.getElementById('prod-name').value='';
-    document.getElementById('prod-price').value='';
-    document.getElementById('prod-qty').value='';
-    document.querySelectorAll('.prod-card').forEach(c=>c.classList.remove('selected'));
-    setTimeout(()=>{ok.style.display='none';},2500);
-  }catch(e){err.textContent="Xato: "+e.message;err.style.display='block';}
-}
-
-async function loadProducts(){
-  try{
-    const filter=currentUser.is_admin?'products?order=created_at.desc&limit=500':'products?user_name=eq.'+encodeURIComponent(currentUser.name)+'&order=created_at.desc&limit=500';
-    allProducts=await sbFetch(filter);
-    renderList();
-    renderStats();
-    if(currentUser&&currentUser.is_admin){renderAdminList();loadAdminUsers();}
-  }catch(e){
-    document.getElementById('list-container').innerHTML='<p class="empty">Yuklashda xato: '+e.message+'</p>';
-  }
-}
-
-function switchTab(t){
-  ['add','list','stats','admin'].forEach(x=>{
-    const el=document.getElementById('tab-content-'+x);
-    if(el)el.style.display=x===t?'block':'none';
-    const tab=document.getElementById('tab-'+x);
-    if(tab)tab.classList.toggle('active',x===t);
-  });
-  if(t==='list'||t==='stats'||t==='admin')loadProducts();
-}
-
-function marketTag(m){
-  const map={"Do'kon":"tag-do","Bozor":"tag-bozor","Supermarket":"tag-super","Onlayn":"tag-onlayn"};
-  return '<span class="tag '+(map[m]||'tag-other')+'">'+m+'</span>';
-}
-
-function getProdEmoji(name){
-  const p=PRODUCTS.find(x=>x.label===name);
-  return p?p.emoji+' ':'';
-}
-
-function renderList(){
-  const q=(document.getElementById('search-input').value||'').toLowerCase();
-  let items=[...allProducts];
-  if(q)items=items.filter(p=>p.name.toLowerCase().includes(q)||p.user_name.toLowerCase().includes(q));
-  const c=document.getElementById('list-container');
-  if(!items.length){c.innerHTML='<p class="empty">Ma\'lumot topilmadi</p>';return;}
-  c.innerHTML=items.map(p=>`
-    <div class="list-item">
-      <div style="flex:1;">
-        <div class="item-name">${getProdEmoji(p.name)}${p.name}${marketTag(p.market)}</div>
-        <div class="item-meta">${p.date||""}${p.qty?" · "+p.qty:""}</div>
-        ${(currentUser&&(currentUser.is_admin||p.user_name===currentUser.name))?`
-        <div class="item-actions">
-          <button class="btn btn-sm btn-edit" onclick="openEdit('${p.id}')">✏️ Tahrirlash</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteProduct('${p.id}')">🗑️ O'chirish</button>
-        </div>`:''}
-      </div>
-      <div class="price-badge">${Number(p.price).toLocaleString()} so'm</div>
-    </div>`).join('');
-}
-
-function renderStats(){
-  const p=allProducts;
-  document.getElementById('st-total').textContent=p.length;
-  document.getElementById('st-users').textContent=[...new Set(p.map(x=>x.user_name))].length;
-  const avg=p.length?Math.round(p.reduce((s,x)=>s+Number(x.price),0)/p.length):0;
-  document.getElementById('st-avg').textContent=avg.toLocaleString();
-  const counts={};
-  p.forEach(x=>{counts[x.name]=(counts[x.name]||0)+1;});
-  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,6);
-  const max=sorted[0]?sorted[0][1]:1;
-  document.getElementById('top-products').innerHTML=sorted.length?sorted.map(([n,c])=>`
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-      <div style="font-size:13px;min-width:120px;">${getProdEmoji(n)}${n}</div>
-      <div style="flex:1;height:7px;background:#f0f0eb;border-radius:4px;overflow:hidden;">
-        <div style="height:100%;width:${Math.round(c/max*100)}%;background:#1a1a1a;border-radius:4px;"></div>
-      </div>
-      <div style="font-size:13px;color:#888;min-width:28px;text-align:right;">${c}</div>
-    </div>`).join(''):'<p class="empty">Hali ma\'lumot yo\'q</p>';
-  const ua={};
-  p.forEach(x=>{ua[x.user_name]=(ua[x.user_name]||0)+1;});
-  document.getElementById('user-activity').innerHTML=Object.entries(ua).sort((a,b)=>b[1]-a[1]).map(([u,c])=>`
-    <div class="list-item">
-      <div class="item-name">${u}</div>
-      <div style="font-size:13px;color:#888;">${c} ta yozuv</div>
-    </div>`).join('')||'<p class="empty">Hali ma\'lumot yo\'q</p>';
-}
-
-function openEdit(id){
-  const p=allProducts.find(x=>x.id===id);
-  if(!p)return;
-  document.getElementById('edit-id').value=p.id;
-  document.getElementById('edit-name').value=p.name;
-  document.getElementById('edit-price').value=p.price;
-  document.getElementById('edit-qty').value=p.qty||'';
-  document.getElementById('edit-market').value=p.market||"Do'kon";
-  document.getElementById('edit-date').value=p.date||'';
-  document.getElementById('edit-err').style.display='none';
-  document.getElementById('edit-modal').classList.add('open');
-}
-
-function closeModal(){document.getElementById('edit-modal').classList.remove('open');}
-
-async function saveEdit(){
-  const id=document.getElementById('edit-id').value;
-  const name=document.getElementById('edit-name').value.trim();
-  const price=parseFloat(document.getElementById('edit-price').value);
-  const qty=document.getElementById('edit-qty').value.trim();
-  const market=document.getElementById('edit-market').value;
-  const date=document.getElementById('edit-date').value;
-  const err=document.getElementById('edit-err');
-  err.style.display='none';
-  if(!name||!price||price<=0){err.textContent="Nom va narxni kiriting";err.style.display='block';return;}
-  try{
-    await sbFetch('products?id=eq.'+id,{method:'PATCH',body:JSON.stringify({name,price,qty,market,date})});
-    closeModal();
-    loadProducts();
-  }catch(e){err.textContent="Xato: "+e.message;err.style.display='block';}
-}
-
-async function deleteProduct(id){
-  if(!confirm("Haqiqatan ham o'chirishni xohlaysizmi?"))return;
-  try{
-    await sbFetch('products?id=eq.'+id,{method:'DELETE',prefer:'return=minimal'});
-    loadProducts();
-  }catch(e){alert("Xato: "+e.message);}
-}
-
-function adminTab(t){
-  document.getElementById('admin-records').style.display=t==='records'?'block':'none';
-  document.getElementById('admin-users').style.display=t==='users'?'block':'none';
-  document.getElementById('atab-records').style.cssText=t==='records'?'background:#1a1a1a;color:#fff;border-color:#1a1a1a;padding:5px 12px;font-size:13px;':'padding:5px 12px;font-size:13px;';
-  document.getElementById('atab-users').style.cssText=t==='users'?'background:#1a1a1a;color:#fff;border-color:#1a1a1a;padding:5px 12px;font-size:13px;':'padding:5px 12px;font-size:13px;';
-  if(t==='users')loadAdminUsers();
-}
-
-function renderAdminList(){
-  const q=(document.getElementById('admin-search').value||'').toLowerCase();
-  let items=[...allProducts];
-  if(q)items=items.filter(p=>p.name.toLowerCase().includes(q)||p.user_name.toLowerCase().includes(q));
-  const c=document.getElementById('admin-list-container');
-  if(!items.length){c.innerHTML='<p class="empty">Ma\'lumot topilmadi</p>';return;}
-  c.innerHTML=items.map(p=>`
-    <div class="list-item">
-      <div style="flex:1;">
-        <div class="item-name">${getProdEmoji(p.name)}${p.name}${marketTag(p.market)}</div>
-        <div class="item-meta">${p.user_name} · ${p.group_name} · ${p.date||''}${p.qty?' · '+p.qty:''}</div>
-        <div class="item-actions">
-          <button class="btn btn-sm btn-edit" onclick="openEdit('${p.id}')">✏️ Tahrirlash</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteProduct('${p.id}')">🗑️ O'chirish</button>
-        </div>
-      </div>
-      <div class="price-badge">${Number(p.price).toLocaleString()} so'm</div>
-    </div>`).join('');
-}
-
-async function loadAdminUsers(){
-  try{
-    const users=await sbFetch('users?order=created_at.asc');
-    const c=document.getElementById('admin-users-container');
-    if(!users.length){c.innerHTML='<p class="empty">A\'zolar yo\'q</p>';return;}
-    c.innerHTML='<p style="font-size:14px;font-weight:600;margin-bottom:1rem;">Jami: '+users.length+' ta a\'zo</p>'+
-    users.map(u=>`
-      <div class="user-row">
-        <div>
-          <div style="font-size:14px;font-weight:500;">${u.name} ${blockedUsers.includes(u.name)?'<span class="blocked-badge">Bloklangan</span>':''}</div>
-          <div style="font-size:12px;color:#888;">${u.group_name}</div>
-        </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;">
-          ${blockedUsers.includes(u.name)
-            ?`<button class="btn btn-sm" onclick="toggleBlock('${u.name}',false)">Blokdan chiqarish</button>`
-            :`<button class="btn btn-sm btn-danger" onclick="toggleBlock('${u.name}',true)">Bloklash</button>`
-          }
-          <button class="btn btn-sm btn-danger" onclick="deleteUser('${u.id}','${u.name}')">O'chirish</button>
-        </div>
-      </div>`).join('');
-  }catch(e){
-    document.getElementById('admin-users-container').innerHTML='<p class="empty">Yuklashda xato</p>';
-  }
-}
-
-function toggleBlock(name,block){
-  if(block){if(!blockedUsers.includes(name))blockedUsers.push(name);}
-  else{blockedUsers=blockedUsers.filter(u=>u!==name);}
-  localStorage.setItem('blocked_users',JSON.stringify(blockedUsers));
-  loadAdminUsers();
-}
-
-async function deleteUser(id,name){
-  if(!confirm(name+" ni o'chirishni xohlaysizmi? Uning barcha ma'lumotlari ham o'chadi."))return;
-  try{
-    await sbFetch('products?user_name=eq.'+encodeURIComponent(name),{method:'DELETE',prefer:'return=minimal'});
-    await sbFetch('users?id=eq.'+id,{method:'DELETE',prefer:'return=minimal'});
-    loadAdminUsers();
-    loadProducts();
-  }catch(e){alert("Xato: "+e.message);}
-}
-
-function downloadCSV(){
-  if(!allProducts.length){alert("Yuklab olish uchun ma'lumot yo'q");return;}
-  const h=["Mahsulot","Narxi (so'm)","Miqdori","Bozor turi","Kategoriya","Sana","A'zo","Guruh"];
-  const rows=allProducts.map(p=>[p.name,p.price,p.qty||'',p.market,p.cat,p.date,p.user_name,p.group_name]);
-  const csv=[h,...rows].map(r=>r.map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(',')).join('\n');
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}));
-  a.download='bozor_narxlar_'+new Date().toISOString().split('T')[0]+'.csv';
-  a.click();
-}
-</script>
-  <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/bozor-narx/service-worker.js')
-        .then(reg => console.log('✅ SW ishlayapti'))
-        .catch(err => console.error('❌ Xato:', err));
+  async function sbFetch(path, opts={}) {
+    const res = await fetch(SUPA_URL + '/rest/v1/' + path, {
+      ...opts,
+      headers: {
+        'apikey': SUPA_KEY,
+        'Authorization': 'Bearer ' + SUPA_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': opts.prefer || 'return=representation',
+        ...(opts.headers || {})
+      }
     });
+    if (!res.ok) { const e = await res.text(); throw new Error(e); }
+    const text = await res.text();
+    return text ? JSON.parse(text) : [];
+  }
+
+  let currentUser = null;
+  let allProducts = [];
+  let currentCat = '';
+
+  function setScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  async function doRegister() {
+    const name = document.getElementById('reg-name').value.trim();
+    const group = document.getElementById('reg-group').value.trim();
+    const pass = document.getElementById('reg-pass').value.trim();
+    const err = document.getElementById('reg-err');
+    const ok = document.getElementById('reg-ok');
+    err.style.display = 'none'; ok.style.display = 'none';
+    if (!name || !group || !pass) { err.textContent = "Barcha maydonlarni to'ldiring"; err.style.display = 'block'; return; }
+    try {
+      const existing = await sbFetch('users?name=eq.' + encodeURIComponent(name) + '&group_name=eq.' + encodeURIComponent(group));
+      if (existing.length) { err.textContent = "Bu foydalanuvchi allaqachon mavjud"; err.style.display = 'block'; return; }
+      await sbFetch('users', { method: 'POST', body: JSON.stringify({ name, group_name: group, pass }) });
+      ok.style.display = 'block';
+      setTimeout(() => setScreen('s-login'), 2000);
+    } catch(e) { err.textContent = "Xato: " + e.message; err.style.display = 'block'; }
+  }
+
+  async function doLogin() {
+    const name = document.getElementById('login-name').value.trim();
+    const group = document.getElementById('login-group').value.trim();
+    const pass = document.getElementById('login-pass').value.trim();
+    const err = document.getElementById('login-err');
+    err.style.display = 'none';
+    if (!name || !group || !pass) { err.textContent = "Barcha maydonlarni to'ldiring"; err.style.display = 'block'; return; }
+    try {
+      const users = await sbFetch('users?name=eq.' + encodeURIComponent(name) + '&group_name=eq.' + encodeURIComponent(group) + '&pass=eq.' + encodeURIComponent(pass));
+      if (!users.length) { err.textContent = "Ism, guruh yoki parol noto'g'ri"; err.style.display = 'block'; return; }
+      currentUser = users[0];
+      document.getElementById('user-avatar').textContent = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+      document.getElementById('user-label').textContent = name;
+      setScreen('s-main');
+      document.getElementById('prod-date').value = new Date().toISOString().split('T')[0];
+      switchTab('add');
+    } catch(e) { err.textContent = "Xato: " + e.message; err.style.display = 'block'; }
+  }
+
+  function doLogout() { currentUser = null; allProducts = []; setScreen('s-login'); }
+
+  async function addProduct() {
+    const name = document.getElementById('prod-name').value.trim();
+    const price = parseFloat(document.getElementById('prod-price').value);
+    const qty = document.getElementById('prod-qty').value.trim();
+    const market = document.getElementById('prod-market').value;
+    const cat = document.getElementById('prod-cat').value;
+    const date = document.getElementById('prod-date').value;
+    const err = document.getElementById('add-err');
+    const ok = document.getElementById('add-ok');
+    err.style.display = 'none'; ok.style.display = 'none';
+    if (!name || !price || price <= 0) { err.style.display = 'block'; return; }
+    try {
+      await sbFetch('products', { method: 'POST', body: JSON.stringify({ name, price, qty, market, cat, date, user_name: currentUser.name, group_name: currentUser.group_name }) });
+      ok.style.display = 'block';
+      document.getElementById('prod-name').value = '';
+      document.getElementById('prod-price').value = '';
+      document.getElementById('prod-qty').value = '';
+      setTimeout(() => { ok.style.display = 'none'; }, 2500);
+    } catch(e) { err.textContent = "Xato: " + e.message; err.style.display = 'block'; }
+  }
+
+  async function loadProducts() {
+    document.getElementById('list-container').innerHTML = '<p class="loading"><span class="spinner"></span>Yuklanmoqda...</p>';
+    try {
+      allProducts = await sbFetch('products?order=created_at.desc&limit=500');
+      renderList();
+      renderStats();
+    } catch(e) {
+      document.getElementById('list-container').innerHTML = '<p class="empty">Yuklashda xato: ' + e.message + '</p>';
+    }
+  }
+
+  function switchTab(t) {
+    ['add', 'list', 'stats'].forEach(x => {
+      document.getElementById('tab-content-' + x).style.display = x === t ? 'block' : 'none';
+      document.getElementById('tab-' + x).classList.toggle('active', x === t);
+    });
+    if (t === 'list' || t === 'stats') loadProducts();
+  }
+
+  function marketTag(m) {
+    const map = { "Do'kon": "tag-do", "Bozor": "tag-bozor", "Supermarket": "tag-super", "Onlayn": "tag-onlayn" };
+    return '<span class="tag ' + (map[m] || 'tag-other') + '">' + m + '</span>';
+  }
+
+  function filterCat(el, cat) {
+    currentCat = cat;
+    document.querySelectorAll('.category-tag').forEach(e => e.classList.remove('sel'));
+    el.classList.add('sel');
+    renderList();
+  }
+
+  function renderList() {
+    const q = (document.getElementById('search-input').value || '').toLowerCase();
+    let items = [...allProducts];
+    if (q) items = items.filter(p => p.name.toLowerCase().includes(q) || p.user_name.toLowerCase().includes(q));
+    if (currentCat) items = items.filter(p => p.cat === currentCat);
+    const c = document.getElementById('list-container');
+    if (!items.length) { c.innerHTML = '<p class="empty">Ma\'lumot topilmadi</p>'; return; }
+    c.innerHTML = items.map(p => `
+      <div class="list-item">
+        <div>
+          <div class="item-name">${p.name}${marketTag(p.market)}</div>
+          <div class="item-meta">${p.user_name} &bull; ${p.group_name} &bull; ${p.date || ''}${p.qty ? ' &bull; ' + p.qty : ''}</div>
+          <div class="item-meta" style="margin-top:2px;color:#bbb;">${p.cat || ''}</div>
+        </div>
+        <div class="price-badge">${Number(p.price).toLocaleString()} so'm</div>
+      </div>`).join('');
+  }
+
+  function renderStats() {
+    const p = allProducts;
+    document.getElementById('st-total').textContent = p.length;
+    document.getElementById('st-users').textContent = [...new Set(p.map(x => x.user_name))].length;
+    const avg = p.length ? Math.round(p.reduce((s, x) => s + Number(x.price), 0) / p.length) : 0;
+    document.getElementById('st-avg').textContent = avg.toLocaleString();
+    const counts = {};
+    p.forEach(x => { counts[x.name] = (counts[x.name] || 0) + 1; });
+    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 6);
+    const max = sorted[0] ? sorted[0][1] : 1;
+    document.getElementById('top-products').innerHTML = sorted.length ? sorted.map(([n, c]) => `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div style="font-size:13px;min-width:110px;">${n}</div>
+        <div style="flex:1;height:7px;background:#f0f0eb;border-radius:4px;overflow:hidden;">
+          <div style="height:100%;width:${Math.round(c / max * 100)}%;background:#1a1a1a;border-radius:4px;"></div>
+        </div>
+        <div style="font-size:13px;color:#888;min-width:28px;text-align:right;">${c}</div>
+      </div>`).join('') : '<p class="empty" style="padding:0.5rem;">Hali ma\'lumot yo\'q</p>';
+    const ua = {};
+    p.forEach(x => { ua[x.user_name] = (ua[x.user_name] || 0) + 1; });
+    const uaS = Object.entries(ua).sort((a, b) => b[1] - a[1]);
+    document.getElementById('user-activity').innerHTML = uaS.length ? uaS.map(([u, c]) => `
+      <div class="list-item">
+        <div class="item-name">${u}</div>
+        <div style="font-size:13px;color:#888;">${c} ta yozuv</div>
+      </div>`).join('') : '<p class="empty" style="padding:0.5rem;">Hali ma\'lumot yo\'q</p>';
+  }
+
+  function downloadCSV() {
+    if (!allProducts.length) { alert("Yuklab olish uchun ma'lumot yo'q"); return; }
+    const h = ["Mahsulot", "Narxi (so'm)", "Miqdori", "Bozor turi", "Kategoriya", "Sana", "A'zo", "Guruh"];
+    const rows = allProducts.map(p => [p.name, p.price, p.qty || '', p.market, p.cat, p.date, p.user_name, p.group_name]);
+    const csv = [h, ...rows].map(r => r.map(v => '"' + String(v || '').replace(/"/g, '""') + '"').join(',')).join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' }));
+    a.download = 'bozor_narxlar_' + new Date().toISOString().split('T')[0] + '.csv';
+    a.click();
   }
 </script>
 </body>
